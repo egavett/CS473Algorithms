@@ -1,5 +1,4 @@
 import collections
-import queue
 import math
 
 def weighted_directed_graph( verticies, edges) :
@@ -12,28 +11,32 @@ def weighted_directed_graph( verticies, edges) :
     return [verticies, d_graph, weights]
 
 def dijkstra(vertices, edges, weights):
-    q = queue.PriorityQueue()
+    q = []
     for vertex in vertices:
         weight = math.inf
         if vertex == 1:
             weight = 0
-        q.put((weight, vertex))
-    visited = collections.defaultdict(lambda:False, {})
+        q.append((weight, vertex))    
+    distances = collections.defaultdict(lambda: -1)
 
-    while not q.empty():
-        w, v = q.get()
-        visited[v] = True
+    while q:
+        q.sort(key=lambda x: x[0])  # sort based on the weights
+        w, v = q.pop(0)
+        if w == math.inf: w = -1
+        distances[v] = w #save v's final distance
 
-        for vertex in edges[v]:
-            if not visited[vertex]:
-                weight = weights[v, vertex]
-                print(weight)
+        # we need to update the weights for the vertices while they are in the queue. queue.PriorityQueue() does not arbitrary access.
+        # this method allows access to the weights within the queue without needed an additional structure to track the weights
+        for i in range(len(q)):
+            vertex = q[i]
+            #if the vertices we haven't visited are adjacent to the next vertex
+            if vertex[1] in edges[v]:
+                weight = weights[v, vertex[1]]
+                if w + weight < vertex[0]:
+                    newVertex = (w + weight, vertex[1]) #tuples are immutable, so create a new tuple to hold the new weight
+                    q[i] = newVertex
 
-
-
-    return -1
-
-
+    return distances
 
 
 
@@ -49,5 +52,11 @@ vertexCount = int(linesin[0][0])
 linesin.pop(0)
 edges = [(int(edge[0]), int(edge[1]), int(edge[2])) for edge in linesin]
 V, E, W = weighted_directed_graph(vertexCount, edges)
-dijkstra(V, E, W)
 
+distances = dijkstra(V, E, W)
+
+output = [distances[x] for x in sorted(distances.keys())]
+print(" ".join(str(x) for x in output))
+fileout = open("rosalind_dij_output.txt", "w")
+fileout.write(" ".join(str(x) for x in output))
+fileout.close()
