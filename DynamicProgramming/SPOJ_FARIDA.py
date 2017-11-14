@@ -9,6 +9,7 @@ def maxCoins(array):
 numberOfCases = int(input())
 for i in range(numberOfCases):
     ingoreThis = int(input()) #parsing works without needed to know the length of the array
-    inputStrings = raw_input().strip().split()
+    inputStrings = list(map(int, input().split()))
+
     inputArray = [int(x) for x in inputStrings]
     print("Case %d: %d" % (i+1, maxCoins(inputArray)))
