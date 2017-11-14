@@ -14,13 +14,19 @@ def bellman_ford(vertices, edges, weights):
     distances = collections.defaultdict(int)
     for vertex in vertices:
         distances[vertex] = math.inf
-    distances[0] = 0
+    distances[1] = 0
+    
+    for _ in range(len(vertices)-1):
+        for u in edges.keys():
+            for v in edges[u]:
+                w = weights[(u, v)]
+                if distances[u] + w < distances[v]:
+                    distances[v] = distances[u] + w
+    
+    return distances
 
-    for i in range(1, vertices):
-        
 
-
-filein = open('rosalind_dij.txt')
+filein = open('rosalind_bf.txt')
 data = filein.read()
 
 linesin = [ sublist.strip().split() for sublist in data.splitlines() ]
@@ -28,3 +34,18 @@ vertexCount = int(linesin[0][0])
 linesin.pop(0)
 edges = [(int(edge[0]), int(edge[1]), int(edge[2])) for edge in linesin]
 V, E, W = weighted_directed_graph(vertexCount, edges)
+
+distances = bellman_ford(V, E, W)
+
+output = ""
+for v in distances.keys():
+    if distances[v] == math.inf:
+        output += "x"
+    else:
+        output += str(distances[v])
+    output += " "
+print(output)
+
+fileout = open("rosalind_bf_output.txt", "w")
+fileout.write(output)
+fileout.close()
