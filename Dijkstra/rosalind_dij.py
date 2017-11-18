@@ -6,7 +6,7 @@ def weighted_directed_graph( verticies, edges) :
     d_graph = collections.defaultdict(set)
     weights = collections.defaultdict(int)
     for edge in edges :
-        d_graph[ edge[0]].add(edge[1])
+        d_graph[edge[0]].add(edge[1])
         weights[(edge[0], edge[1])] = edge[2]
     return [verticies, d_graph, weights]
 
@@ -18,29 +18,23 @@ def dijkstra(vertices, edges, weights):
             weight = 0
         q.append((weight, vertex))    
     distances = collections.defaultdict(lambda: -1)
+    visited = set()
 
     while q:
         q.sort(key=lambda x: x[0])  # sort based on the weights
-        w, v = q.pop(0)
+        w, u = q.pop(0)
         if w == math.inf: w = -1
-        distances[v] = w #save v's final distance
+        distances[u] = w    # save v's final distance
+        visited.add(u)
 
-        # we need to update the weights for the vertices while they are in the queue. queue.PriorityQueue() does not arbitrary access.
-        # this method allows access to the weights within the queue without needed an additional structure to track the weights
         for i in range(len(q)):
-            vertex = q[i]
-            #if the vertices we haven't visited are adjacent to the next vertex
-            if vertex[1] in edges[v]:
-                weight = weights[v, vertex[1]]
-                if w + weight < vertex[0]:
-                    newVertex = (w + weight, vertex[1]) #tuples are immutable, so create a new tuple to hold the new weight
+            v = q[i]
+            if v[1] in edges[u] and v[1] not in visited:   # if the vertices we haven't visited are adjacent to the next vertex
+                weight = weights[u, v[1]]
+                if w + weight < v[0]:
+                    newVertex = (w + weight, v[1]) # tuples are immutable, so create a new tuple to hold the new weight
                     q[i] = newVertex
-
     return distances
-
-
-
-
 
 
 
