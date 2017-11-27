@@ -7,10 +7,10 @@ def two_sum(array):
     for i in range(len(array)):
         nextValue = array[i]
         if -nextValue in visited.keys():
-            return visited[-nextValue]+1, i+1
+            return "{} {}".format(visited[-nextValue]+1, i+1)
         else:
             visited[nextValue] = i
-    return -1, -1
+    return "-1"
 
     
 
@@ -25,13 +25,9 @@ fileout = open("rosalind_2sum_output.txt", "w")
 
 for x in range(1, arrayCount+1):
     array = [int(x) for x in linesin[x]]
-    i, j = two_sum(array)
+    output = two_sum(array)
 
-    if i == -1:
-        print(-1)
-        fileout.write("-1\n")
-    else:
-        print("{} {}".format(i, j))
-        fileout.write("{} {}\n".format(i, j))
+    print(output)
+    fileout.write("{}\n".format(output))
 
 fileout.close()
